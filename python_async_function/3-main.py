@@ -9,5 +9,6 @@ async def test(max_delay: int) -> float:
     task = task_wait_random(max_delay)
     await task
     print(task.__class__)
+    print(task_wait_random.__annotations__)
 
 asyncio.run(test(5))
