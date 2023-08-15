@@ -9,9 +9,10 @@ def update_topics(mongo_collection, name, topics):
         name (str): the school name to update.
         topics (list of strings): list of topics approached in the school
     Returns:
-        Nothing.
+        The document updated
+		None if no document updated
     """
-    mongo_collection.update_many(
+    return mongo_collection.update_many(
         {"name": name},
         {
             "$set": {"topic": topics}
