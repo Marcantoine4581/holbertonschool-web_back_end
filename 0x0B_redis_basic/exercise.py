@@ -3,8 +3,21 @@
 import redis
 from typing import Union, Optional, Callable
 from uuid import uuid4
+import functools
 
 UnionOfTypes = Union[str, bytes, int, float]
+
+
+
+def count_calls(method: Callable) -> Callable:
+    key = method.__qualname__
+    print(key)
+    
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+         self._redis.incr(key)
+         return method(self, *args, **kwargs)
+    return wrapper
 
 
 class Cache:
@@ -13,7 +26,8 @@ class Cache:
         ''' constructor for redis model'''
         self._redis = redis.Redis()
         self._redis.flushdb()
-
+    
+    @count_calls
     def store(self, data: UnionOfTypes) -> str:
         '''Store data into redis cache using a random key
         and returns the key'''
