@@ -8,18 +8,17 @@ import functools
 UnionOfTypes = Union[str, bytes, int, float]
 
 
-
 def count_calls(method: Callable) -> Callable:
     """Decorator which count how many times methods
     of the Cache class are called"""
     key = method.__qualname__
     print(key)
-    
+
     @functools.wraps(method)
     def wrapper_count_calls(self, *args, **kwargs):
         """Inner Wrapper function"""
-         self._redis.incr(key)
-         return method(self, *args, **kwargs)
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
     return wrapper
 
 
@@ -29,7 +28,7 @@ class Cache:
         ''' constructor for redis model'''
         self._redis = redis.Redis()
         self._redis.flushdb()
-    
+
     @count_calls
     def store(self, data: UnionOfTypes) -> str:
         '''Store data into redis cache using a random key
