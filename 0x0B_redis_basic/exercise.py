@@ -10,7 +10,8 @@ UnionOfTypes = Union[str, bytes, int, float]
 
 def count_calls(method: Callable) -> Callable:
     """Decorator which count how many times methods
-    of the Cache class are called"""
+    of the Cache class are called
+    """
     key = method.__qualname__
 
     @functools.wraps(method)
@@ -21,6 +22,24 @@ def count_calls(method: Callable) -> Callable:
     return wrapper_count_calls
 
 
+def call_history(method: Callable) -> Callable:
+    '''decorator to store the history of inputs and outputs
+    for a particular function
+    '''
+
+    @functools.wraps(method)
+    def wrapper_call_history(self, *args, **kwargs):
+        """Inner Wrapper function"""
+        input = str(args)
+        self._redis.rpush(method.__qualname__ + ":inputs", input)
+
+        output = str(method(self, *args, **kwargs))
+        self._redis.rpush(method.__qualname__ + ":outputs", output)
+
+        return output
+    return wrapper_call_history
+
+
 class Cache:
     ''' Cache redis class'''
     def __init__(self):
@@ -28,6 +47,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @call_history
     @count_calls
     def store(self, data: UnionOfTypes) -> str:
         '''Store data into redis cache using a random key
