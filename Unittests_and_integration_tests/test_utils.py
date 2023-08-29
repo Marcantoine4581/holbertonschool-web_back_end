@@ -2,8 +2,9 @@
 """Unittest for access_nested_map
 """
 import unittest
+from unittest.mock import Mock, patch
 from parameterized import parameterized
-from utils import access_nested_map
+from utils import access_nested_map, get_json
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -25,3 +26,20 @@ class TestAccessNestedMap(unittest.TestCase):
         """  Test that a KeyError is raised for the following inputs """
         with self.assertRaises(KeyError):
             access_nested_map(nested_map, path)
+
+
+class TestGetJson(unittest.TestCase):
+    """ Class for testing the method get_json """
+    @parameterized.expand([
+       ("http://example.com", {"payload": True}),
+       ("http://holberton.io", {"payload": False}),
+    ])
+    def test_get_json(self, test_url, test_payload):
+        """ Test the method get_json """
+        #  Instantiate a new Mock instance
+        response_mock = Mock()
+        response_mock.json.return_value = test_payload
+        with patch("requests.get", return_value=response_mock):
+            response = get_json(test_url)
+            response_mock.json.assert_called_once()
+        self.assertEqual(response, test_payload)
