@@ -3,6 +3,8 @@
 from typing import List
 import re
 import logging
+import mysql.connector
+import os
 
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
@@ -27,7 +29,7 @@ def filter_datum(fields: List[str], redaction: str, message: str,
 
 
 def get_logger() -> logging.Logger:
-    """ logging.Logger object """
+    """ returns logging.Logger object """
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -37,6 +39,21 @@ def get_logger() -> logging.Logger:
     logger.addHandler(stream_handler)
 
     return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """ returns a connector to the database
+    (mysql.connector.connection.MySQLConnection object) """
+    username = os.environ.get("PERSONAL_DATA_DB_USERNAME", "root")
+    password = os.environ.get("PERSONAL_DATA_DB_PASSWORD", "")
+    host = os.environ.get("PERSONAL_DATA_DB_HOST", "localhost")
+    db = os.environ.get("PERSONAL_DATA_DB_NAME")
+
+    connection = mysql.connector.connect(host=host,
+                                         database=db,
+                                         user=username,
+                                         password=password)
+    return connection
 
 
 class RedactingFormatter(logging.Formatter):
