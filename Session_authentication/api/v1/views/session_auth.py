@@ -9,6 +9,14 @@ from os import getenv
 
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
 def login() -> str:
+    """ POST /api/v1/auth_session/login
+    Return:
+      - User object JSON represented
+      - set a cookie to the response
+      - 404 if no user found for this email
+      - 400 if password missing
+      - 401 if wrong password
+    """
     email = request.form.get("email")
     if not email or email == "":
         return jsonify({"error": "email missing"}), 400
