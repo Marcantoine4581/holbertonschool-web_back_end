@@ -5,6 +5,7 @@ from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models.user import User
 from os import getenv
+from api.v1.app import auth
 
 
 @app_views.route('/auth_session/login', methods=['POST'], strict_slashes=False)
@@ -41,3 +42,21 @@ def login() -> str:
             response.set_cookie(getenv('SESSION_NAME'), session_id)
             return response
     return jsonify({"error": "no user found for this email"}), 404
+
+
+@app_views.route('/auth_session/logout',
+                 methods=['DELETE'], strict_slashes=False)
+def logout():
+    """ DELETE /auth_session/logout
+    Return:
+        - empty JSON dictionary with the status code 200
+        - If destroy_session returns False, abort(404)
+    """
+    from api.v1.app import auth
+
+    deleted = auth.destroy_session(request)
+
+    if not deleted:
+        abort(404)
+
+    return jsonify({}), 200
