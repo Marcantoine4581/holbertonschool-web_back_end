@@ -59,3 +59,17 @@ class DB:
             raise NoResultFound
 
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """ Locates the user to update, then will update the user’s attributes
+        as passed in the method’s arguments then commit changes to the database
+        """
+        user = self.find_user_by(id=user_id)
+        column_names = User.__table__.columns.keys()
+        for key in kwargs.keys():
+            if key not in column_names:
+                raise ValueError
+
+        for key, val in kwargs.items():
+            setattr(user, key, val)
+        self._session.commit()
