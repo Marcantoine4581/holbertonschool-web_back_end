@@ -12,15 +12,15 @@ app.get('/', (req, res) => {
 });
 
 app.get('/students', (req, res) => {
-  res.set('Content-Type', 'text/plain');
   countStudents(database)
     .then((contents) => {
       res.set('Content-Type', 'text/plain');
-      res.status(200);
-      res.send(`This is the list of our students\n${contents.join('\n')}`);
+      res.status(200)
+        .send(`This is the list of our students\n${contents.join('\n')}`);
     })
     .catch((error) => {
-      res.status(404).send(error.message);
+      res.status(404)
+        .send(`This is the list of our students\n${error.message}`);
     });
 });
 
