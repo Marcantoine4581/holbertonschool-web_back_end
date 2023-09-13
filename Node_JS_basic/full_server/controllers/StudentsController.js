@@ -17,9 +17,7 @@ class StudentsController {
 
           display.push(message);
         }
-        response.set('Content-Type', 'text/plain');
-        response.status(200)
-          .send(`${firstLine}${display.join('\n')}`);
+        response.status(200).send(`${firstLine}${display.join('\n')}`);
       })
       .catch(() => {
         response.status(500).send('Cannot load the database');
@@ -35,10 +33,7 @@ class StudentsController {
       .then((contents) => {
         const LIST_OF_FIRSTNAMES = contents[major].join(', ');
         const message = `List: ${LIST_OF_FIRSTNAMES}`;
-
-        response.set('Content-Type', 'text/plain');
-        response.status(200)
-          .send(message);
+        response.status(200).send(message);
       })
       .catch(() => {
         response.status(500).send('Cannot load the database');
