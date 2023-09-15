@@ -1,8 +1,6 @@
 const { expect } = require('chai');
 const request = require('request');
 
-const app = require('./api');
-
 describe('test the payement system API', function () {
   describe('GET /', function () {
     const url = 'http://localhost:7865/'
